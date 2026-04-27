@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      args:
+        PORT: 5000
+    env_file:
+      - ./api-gateway/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - auth-service
+      - product-service
+      - order-service
+
+  auth-service:
+    build:
+      context: ./auth-service
+      args:
+        PORT: 5001
+    env_file:
+      - ./auth-service/.env
+    ports:
+      - "5001:5001"
+
+  product-service:
+    build:
+      context: ./product-service
+      args:
+        PORT: 5002
+    env_file:
+      - ./product-service/.env
+    ports:
+      - "5002:5002"
+
+  order-service:
+    build:
+      context: ./order-service
+      args:
+        PORT: 5003
+    env_file:
+      - ./order-service/.env
+    ports:
+      - "5003:5003"
