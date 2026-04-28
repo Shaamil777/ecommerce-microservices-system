@@ -1,5 +1,6 @@
 const {verifyUser} = require("../Clients/authClient");
 const {getProduct} = require("../Clients/productClient");
+const Order = require("../models/Order");
 
 const createOrder = async (req)=>{
         const token = req.headers.authorization;
@@ -9,18 +10,18 @@ const createOrder = async (req)=>{
         const user = await verifyUser(token)
 
         console.log("step 2: getting Product")
-        let product;
-        try {
-            product = await getProduct(productId)
-        } catch (error) {
-            console.log("Product failed, using fallback")
-            product = {id:productId,name:"Unknown Product"}
-        }
+        const product = await getProduct(productId)
+        
+        const order = await Order.create({
+            userId:user.userId,
+            productId:product._id
+        });
 
         return {
             message:"Order created successfully",
+            order,
             user,
-            product
+            product,
         }
 };
 

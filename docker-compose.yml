@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   api-gateway:
     build:
@@ -44,3 +42,13 @@ services:
       - ./order-service/.env
     ports:
       - "5003:5003"
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

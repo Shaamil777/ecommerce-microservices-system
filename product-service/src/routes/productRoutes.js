@@ -1,11 +1,7 @@
 const router = require("express").Router()
+const {createProduct, getProductById} = require("../controllers/productController")
 
-router.post("/",(req,res)=>{
-    res.json({message:"Product working"})
-})
-
-router.get("/:id", (req, res) => {
-  res.json({ id: req.params.id, name: "Sample Product" });
-}); 
+router.post("/",createProduct)
+router.get("/:id",getProductById)
 
 module.exports = router
