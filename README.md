@@ -1,6 +1,6 @@
 # E-Commerce Microservices
 
-A microservices-based e-commerce platform built with Node.js, Express, and Docker.
+A robust microservices-based e-commerce platform built with Node.js, Express, and Docker.
 
 ## Architecture
 
