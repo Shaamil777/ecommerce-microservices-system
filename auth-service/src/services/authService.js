@@ -17,7 +17,7 @@ const LoginUser = async({email,password})=>{
     if(!user) throw new Error("User not found")
     const isMatch = await bcrypt.compare(password,user.password)
     if(!isMatch) throw new Error("Invalid credentials")
-    const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
+    const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
     return {token}
 }
 

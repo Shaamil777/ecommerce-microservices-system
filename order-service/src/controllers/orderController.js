@@ -2,7 +2,6 @@ const {createOrder} = require("../services/orderService")
 
 const createOrderHandler = async(req, res)=>{
     try {
-        console.log("ORDER CONTROLLER HIT");
         const result = await createOrder(req)
         res.json(result)
     } catch (error) {
