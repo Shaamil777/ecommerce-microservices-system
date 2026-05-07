@@ -1,0 +1,15 @@
+const { z } = require("zod");
+
+const productSchema = z.object({
+    name: z.string().min(1, "Product name is required"),
+
+    price: z
+        .number({
+            invalid_type_error: "Price must be a number",
+        })
+        .positive("Price must be positive"),
+});
+
+module.exports = {
+    productSchema,
+};
