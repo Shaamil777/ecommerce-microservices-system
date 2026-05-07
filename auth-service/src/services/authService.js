@@ -3,6 +3,12 @@ const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
 
 const RegisterUser = async (data) =>{
+    const exisitingUser = await User.findOne({email:data.email})
+    if(exisitingUser){
+        const error = new Error('User Already Exists')
+        error.statusCode = 409
+        throw error
+    }
     const hashedPassword = await bcrypt.hash(data.password,10)
     const user = await User.create({
         ...data,
