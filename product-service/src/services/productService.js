@@ -5,6 +5,28 @@ const createProductService = async (data)=>{
     return await Product.create(data)
 };
 
+const getProductsService = async (query) =>{
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 5
+    const skip = (page-1)*limit
+
+    const search = query.search || "";
+    const filter = {
+        name:{
+            $regex:search,
+            $options:"i",
+        },
+    };
+    const total = await Product.countDocuments(filter)
+    const products = await Product.find(filter).skip(skip).limit(limit);
+    return {
+        total,
+        page,
+        limit,
+        products,
+    }
+}
+
 const getProductService = async (id)=>{
     if(!mongoose.Types.ObjectId.isValid(id)){
         const error = new Error("Invalid Product Id");
@@ -20,4 +42,4 @@ const getProductService = async (id)=>{
     return product
 }
 
-module.exports = {createProductService, getProductService}
+module.exports = {createProductService, getProductsService, getProductService}
