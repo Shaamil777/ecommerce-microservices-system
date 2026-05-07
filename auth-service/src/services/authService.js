@@ -14,9 +14,17 @@ const RegisterUser = async (data) =>{
 
 const LoginUser = async({email,password})=>{
     const user = await User.findOne({email})
-    if(!user) throw new Error("User not found")
+    if(!user) {
+        const error = new Error("User Not Found")
+        error.statusCode = 404
+        throw error
+    }
     const isMatch = await bcrypt.compare(password,user.password)
-    if(!isMatch) throw new Error("Invalid credentials")
+    if(!isMatch) {
+        const error = new Error("Credentails Doesn't Match")
+        error.statusCode = 401
+        throw error
+    }
     const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
     return {token}
 }
