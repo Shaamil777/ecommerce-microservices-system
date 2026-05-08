@@ -1,41 +1,28 @@
-const { getProduct } = require("../Clients/productClient");
+const { getProduct } = require("../clients/productClient");
 const Order = require("../models/Order");
 
-const createOrder = async (req) => {
+const createOrder = async (userId, productId) => {
+  const product = await getProduct(productId);
 
-    const { productId } = req.body;
+  const order = await Order.create({
+    userId,
+    productId: product._id,
+  });
 
-    const userId = req.user.userId;
-
-    const product = await getProduct(productId);
-
-    const order = await Order.create({
-        userId,
-        productId: product._id,
-    });
-
-    return {
-        message: "Order created successfully",
-        order,
-        product,
-    };
+  return { order, product };
 };
 
-const getOrders = async (req) => {
-    const userId = req.user.userId
-    const orders = await Order.find({
-        userId
+const getOrders = async (userId) => {
+  const orders = await Order.find({ userId });
+
+  const enrichedOrders = await Promise.all(
+    orders.map(async (order) => {
+      const product = await getProduct(order.productId);
+      return { ...order.toObject(), product };
     })
-    const enrichedOrders = await Promise.all(
-        orders.map(async (order) => {
-            const product = await getProduct(order.productId)
-            return {
-                ...order.toObject(),
-                product,
-            }
-        })
-    )
-    return enrichedOrders
-}
+  );
+
+  return enrichedOrders;
+};
 
 module.exports = { createOrder, getOrders };

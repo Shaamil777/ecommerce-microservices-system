@@ -5,17 +5,15 @@ const verifyUser = async (token) => {
     const response = await axios.get(
       "http://auth-service:5001/api/auth/verify",
       {
-        headers: {
-          Authorization: token,
-        },
-        timeout: 3000
+        headers: { Authorization: token },
+        timeout: 3000,
       }
     );
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
-    console.log("AUTH ERROR:",error.message)
-    return {userId:"guest",name:"Guest User"}
+    console.error("Auth verification failed:", error.message);
+    return null;
   }
 };
 

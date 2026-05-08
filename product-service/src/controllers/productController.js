@@ -1,18 +1,18 @@
-const {createProductService, getProductsService, getProductService} = require("../services/productService")
+const { createProduct, getProducts, getProductById } = require("../services/productService");
 
-const createProduct = async (req,res)=>{
-    const product = await createProductService(req.body)
-    res.status(201).json(product)
-}
+const createProductHandler = async (req, res) => {
+  const product = await createProduct(req.body);
+  res.status(201).json({ success: true, message: "Product created successfully", data: product });
+};
 
-const getProducts = async (req,res)=>{
-    const result = await getProductsService(req.query)
-    res.status(200).json(result)
-}
+const getProductsHandler = async (req, res) => {
+  const result = await getProducts(req.query);
+  res.status(200).json({ success: true, message: "Products fetched successfully", data: result });
+};
 
-const getProductById = async (req,res)=>{
-    const product = await getProductService(req.params.id)
-    res.status(200).json(product)
-}
+const getProductByIdHandler = async (req, res) => {
+  const product = await getProductById(req.params.id);
+  res.status(200).json({ success: true, message: "Product fetched successfully", data: product });
+};
 
-module.exports = {createProduct, getProducts, getProductById}
+module.exports = { createProductHandler, getProductsHandler, getProductByIdHandler };

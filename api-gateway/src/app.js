@@ -1,26 +1,24 @@
-const express = require("express")
-const cors = require("cors")
-const dotenv = require("dotenv")
-const swaggerUi = require("swagger-ui-express")
-const swaggerSpec = require("./config/swagger")
+const express = require("express");
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 
+const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
-const authRoutes = require("./routes/authRoutes")
-const productRoutes = require("./routes/productRoutes")
-const orderRoutes = require("./routes/orderRoutes")
+const app = express();
 
-const app = express()
+app.use(cors());
+app.use(express.json());
 
-app.use(cors())
-app.use(express.json())
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
-app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec))
-app.use("/api/auth",authRoutes)
-app.use("/api/products",productRoutes)
-app.use("/api/orders",orderRoutes)
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "API Gateway is running" });
+});
 
-app.get("/",(req,res)=>{
-    res.send("API gateway is running")
-})
-
-module.exports = app
+module.exports = app;
