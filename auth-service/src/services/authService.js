@@ -31,8 +31,95 @@ const LoginUser = async({email,password})=>{
         error.statusCode = 401
         throw error
     }
-    const token = jwt.sign({userId:user._id,role:user.role},process.env.JWT_SECRET,{expiresIn:'1h'})
-    return {token}
+    
+    const accessToken = jwt.sign(
+        {
+            userId:user._id,
+            role:user.role,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn:'15m',
+        }
+    );
+
+    const refreshToken = jwt.sign(
+        {
+            userId:user._id,
+        },
+        process.env.JWT_REFRESH_SECRET,
+        {
+            expiresIn:"7d",
+        }
+    );
+    user.refreshToken = refreshToken;
+    await user.save();
+    return {
+        accessToken,
+        refreshToken,
+    }
 }
 
-module.exports = {RegisterUser,LoginUser}
+const RefreshAccessToken = async (refreshToken) => {
+
+    if (!refreshToken) {
+
+        const error =
+            new Error("Refresh token required");
+
+        error.statusCode = 401;
+
+        throw error;
+    }
+
+    // verify refresh token
+    const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET
+    );
+
+    // find user
+    const user = await User.findById(
+        decoded.userId
+    );
+
+    if (
+        !user ||
+        user.refreshToken !== refreshToken
+    ) {
+
+        const error =
+            new Error("Invalid refresh token");
+
+        error.statusCode = 403;
+
+        throw error;
+    }
+
+    // create NEW access token
+    const accessToken = jwt.sign(
+        {
+            userId: user._id,
+            role: user.role,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "15m",
+        }
+    );
+
+    return { accessToken };
+};
+
+const LogoutUser = async (userId)=>{
+    const user = await User.findById(userId);
+    if(user){
+        user.refreshToken = "";
+        await user.save();
+    }
+    return {
+        message:"Logged out successfully",
+    }
+}
+
+module.exports = {RegisterUser,LoginUser,RefreshAccessToken,LogoutUser}

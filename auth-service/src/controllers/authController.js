@@ -1,5 +1,5 @@
 const User = require("../models/User")
-const {RegisterUser,LoginUser} = require("../services/authService")
+const {RegisterUser,LoginUser,RefreshAccessToken,LogoutUser} = require("../services/authService")
 
 const register = async (req,res)=>{
     const user = await RegisterUser(req.body)
@@ -11,4 +11,13 @@ const login = async(req,res,next)=>{
     res.json(result)
 }
 
-module.exports = {register, login}
+const refreshToken = async (req,res)=>{
+    const result = await RefreshAccessToken(req.body.refreshToken)
+    res.json(result)
+}
+const logout = async (req,res) => {
+    const result = await LogoutUser(req.user.userId)
+    res.json(result)
+}
+
+module.exports = {register, login, refreshToken, logout}
